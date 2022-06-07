@@ -12,10 +12,9 @@ class Video(db.Model):
     id = db.Column(db.Integer,
                        autoincrement=True,
                        primary_key=True)
-    img = db.Column(db.String, unique=True, nullable=False)
+    video = db.Column(db.String, unique=True, nullable=False)
     name = db.Column(db.String, nullable=False, unique=True)
     mimetype = db.Column(db.String, nullable=False)
-
 
 
     def __repr__(self):
@@ -23,9 +22,9 @@ class Video(db.Model):
 
 
     @classmethod
-    def create_video(self, img, name, mimetype):
+    def create_video(self, video, name, mimetype):
         """Create and return a new video."""
-        new_video = Video(img=img, 
+        new_video = Video(video=video, 
                         name=name,
                         mimetype=mimetype)
 

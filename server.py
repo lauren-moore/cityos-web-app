@@ -2,10 +2,15 @@
 from flask import Flask, render_template, request, flash, session, redirect, jsonify
 from model import User, Video, db, connect_to_db
 from jinja2 import StrictUndefined
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
+
+UPLOAD_FOLDER = '/path/to/the/uploads'
+ALLOWED_EXTENSIONS = {'mp4', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -16,19 +21,11 @@ def homepage():
 
 
 
-@app.route("/create-account")
-def view_register_user():
-    """Create a new user."""
-
-    return render_template('create_account.html')
-
-
-
 @app.route("/users", methods=["POST"])
 def register_user():
     """Create a new user."""
 
-    name= request.form.get("name")
+    name = request.form.get("name")
     email = request.form.get("email")
     password = request.form.get("password")
 
@@ -76,6 +73,23 @@ def process_logout():
     return redirect("/")
 
 
+
+@app.route('/upload', methods=["POST"])
+def upload_video():
+
+    video = request.files['video']
+
+    if not video:
+        flash("No video uploaded.")
+
+    filename = secure_filename(video.filename)
+    mimetype = video.mimetype
+
+    new_video = Video.create_video(video=video.read(), name=filename, mimetype=mimetype)
+    db.session.add(new_video)
+    db.session.commit()
+
+    return "Video has successfully uploaded", 200
 
 
 
