@@ -9,23 +9,22 @@ class Video(db.Model):
 
     __tablename__ = 'videos'
 
-    id = db.Column(db.Integer,
+    video_id = db.Column(db.Integer,
                        autoincrement=True,
                        primary_key=True)
-    video = db.Column(db.String, unique=True, nullable=False)
+    # video = db.Column(db.Text, unique=True, nullable=False)
     name = db.Column(db.String, nullable=False, unique=True)
     mimetype = db.Column(db.String, nullable=False)
 
 
     def __repr__(self):
-        return f'<id={self.id} name={self.name}>'
+        return f'<id={self.video_id} name={self.name}>'
 
 
     @classmethod
-    def create_video(self, video, name, mimetype):
+    def create_video(self, name, mimetype):
         """Create and return a new video."""
-        new_video = Video(video=video, 
-                        name=name,
+        new_video = Video(name=name,
                         mimetype=mimetype)
 
         return new_video

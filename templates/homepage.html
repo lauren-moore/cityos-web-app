@@ -3,14 +3,21 @@
 {% block title %}CityOS Video Storage Home{% endblock %}
 
 {% block body %}
+<div class="space">
   <h1>Welcome!</h1>
 
-  <h2>Navigation</h2>
-  <ul>
-    <li><a href="/videos">View all videos</a></li>
-    <li><a href="/upload">Upload video</a></li>
-  </ul>
+  <div class="space">
+  <a href="/videos">View all videos</a>
+  
 
+
+<div class="space">
+  <form action="/upload" enctype="multipart/form-data" method="POST">
+    <input type="file" name="video"/>
+    <input type="submit" value="Upload File"/>
+  </form>
+
+  <div class="space">
   <h2>Create an Account</h2>
   <form action="/users" method="POST">
 
@@ -45,5 +52,7 @@
       <input type="submit">
     </p>
   </form>
+</div>
+</div>
 
 {% endblock %}
