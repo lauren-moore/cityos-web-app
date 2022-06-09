@@ -1,8 +1,9 @@
 """Server for CityOS Video Storage App."""
-from flask import Flask, render_template, request, flash, session, redirect, jsonify
+from flask import Flask, render_template, request, flash, session, redirect
 from model import User, Video, db, connect_to_db
 from jinja2 import StrictUndefined
 from werkzeug.utils import secure_filename
+from datetime import date
 import os
 
 app = Flask(__name__)
@@ -14,8 +15,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_EXTENSIONS = set(['mp4', 'gif'])
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/')
 def homepage():
@@ -78,28 +78,41 @@ def process_logout():
     return redirect("/")
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/upload', methods=["POST"])
 def upload_video():
+    """Upload video to database."""
 
     video = request.files['video']
     filename = secure_filename(video.filename)
 
+    #check if video was uploaded
+    if not video:
+        return "Bad Request", 400
+
+    #check if video already exists in database
+    existing_video = Video.get_video_by_name(filename)
+    if existing_video:
+        return "File exists", 409
+
+    #check if video has supported media type
     if video and allowed_file(video.filename):
+
         video.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
         mimetype = video.mimetype
 
-        new_video = Video.create_video(name=filename, mimetype=mimetype)
+        new_video = Video.create_video(name=filename, mimetype=mimetype, created_at=date.today())
         db.session.add(new_video)
         db.session.commit()
 
     else:
-        flash("No video uploaded."), 400
-        return redirect('/')
+        return "Unsupported Media Type", 415
 
-
-    return "Video has successfully uploaded", 200
+    return "Video has successfully uploaded", 201
 
 
 @app.route("/videos")
@@ -118,10 +131,22 @@ def delete(video_id):
 
     video_to_delete = Video.get_video_by_id(video_id)
 
+    if not video_to_delete:
+        return "File not found", 404
+
     db.session.delete(video_to_delete)
     db.session.commit()
 
-    return "File was successfully removed", 200
+    return "File was successfully removed", 204
+
+
+@app.route("/files/<name>")
+def download(video_id):
+    """Download video file."""
+
+    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    
+    return send_from_directory(directory=uploads, filename=filename)
 
 
 if __name__ == "__main__":
