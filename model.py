@@ -48,44 +48,6 @@ class Video(db.Model):
 
 
 
-class User(db.Model):
-    """A user."""
- 
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer,
-                        autoincrement=True,
-                        primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False, unique=True)
-    password = db.Column(db.String, nullable=False)
-
-
-    def __repr__(self):
-        return f'<User id={self.id} name={self.name} email={self.email}>'
-
-
-    @classmethod
-    def create_user(self, name, email, password):
-        """Create and return a new user."""
-        user = User(name=name,
-                    email=email, 
-                    password=password)
-
-        return user
-
-    @classmethod
-    def get_user_by_id(self, user_id):
-        '''get user by id.'''
-
-        return User.query.get(user_id)
-
-    @classmethod
-    def get_user_by_email(self, email):
-        '''get user by email.'''
-    
-        return User.query.filter(User.email == email).first()
-
 
 def connect_to_db(flask_app, db_uri="postgresql:///videos", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri

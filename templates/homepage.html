@@ -5,56 +5,14 @@
 {% block body %}
 <div class="space">
   <h1>Welcome!</h1>
-
-  <div class="space">
-  <a href="/videos">View all videos</a>
   
 
-
+<!-- Upload Video -->
 <div class="space">
   <form action="/upload" enctype="multipart/form-data" method="POST">
     <input type="file" name="video"/>
     Video Name: <input type="text" name="name"/>
     <input type="submit" value="Upload File"/>
   </form>
-
-<div class="space">
-
-  <h2>Create an Account</h2>
-  <form action="/users" method="POST">
-
-    <p>
-      Name <input type="text" name="name">
-    </p>
-
-    <p>
-      Email <input type="text" name="email">
-    </p>
-
-    <p>
-      Password <input type="password" name="password">
-    </p>
-
-    <p>
-      <input type="submit">
-    </p>
-  </form>
-
-  <h2>Log In</h2>
-  <form action="/login" method="POST">
-    <p>
-      Email <input type="text" name="email">
-    </p>
-
-    <p>
-      Password <input type="password" name="password">
-    </p>
-
-    <p>
-      <input type="submit">
-    </p>
-  </form>
-</div>
-</div>
 
 {% endblock %}

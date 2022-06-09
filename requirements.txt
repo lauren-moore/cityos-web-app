@@ -9,3 +9,6 @@ psycopg2-binary==2.8.6
 SQLAlchemy==1.4.18
 Werkzeug==2.0.1
 Flask-DebugToolbar==0.11.0
+urllib3==1.22
+cx_freeze==6.0b1
+pytest==3.4.2
