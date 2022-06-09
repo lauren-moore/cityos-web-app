@@ -12,7 +12,7 @@ class Video(db.Model):
     video_id = db.Column(db.Integer,
                        autoincrement=True,
                        primary_key=True)
-    # video = db.Column(db.Text, unique=True, nullable=False)
+    fileid = db.Column(db.String, unique=True, nullable=False)
     name = db.Column(db.String, nullable=False, unique=True)
     mimetype = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
@@ -24,9 +24,9 @@ class Video(db.Model):
 
 
     @classmethod
-    def create_video(self, name, mimetype, created_at):
+    def create_video(self, fileid, name, mimetype, created_at):
         """Create and return a new video."""
-        new_video = Video(name=name, mimetype=mimetype, created_at=created_at)
+        new_video = Video(name=name, fileid=fileid, mimetype=mimetype, created_at=created_at)
 
         return new_video
 
@@ -41,6 +41,10 @@ class Video(db.Model):
     @classmethod
     def get_video_by_name(self, name):
         return Video.query.filter(Video.name == name).first()
+
+    @classmethod
+    def get_video_by_fileid(self, fileid):
+        return Video.query.filter(Video.fileid == fileid).first()
 
 
 

@@ -1,5 +1,5 @@
 """Server for CityOS Video Storage App."""
-from flask import Flask, render_template, request, flash, session, redirect
+from flask import Flask, render_template, request, flash, session, redirect, send_file
 from model import User, Video, db, connect_to_db
 from jinja2 import StrictUndefined
 from werkzeug.utils import secure_filename
@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
 
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_EXTENSIONS = set(['mp4', 'gif'])
@@ -88,6 +88,7 @@ def upload_video():
 
     video = request.files['video']
     filename = secure_filename(video.filename)
+    name = request.form.get("name")
 
     #check if video was uploaded
     if not video:
@@ -105,7 +106,7 @@ def upload_video():
         
         mimetype = video.mimetype
 
-        new_video = Video.create_video(name=filename, mimetype=mimetype, created_at=date.today())
+        new_video = Video.create_video(fileid=filename, name=name, mimetype=mimetype, created_at=date.today())
         db.session.add(new_video)
         db.session.commit()
 
@@ -140,13 +141,21 @@ def delete(video_id):
     return "File was successfully removed", 204
 
 
-@app.route("/files/<name>")
-def download(video_id):
+@app.route("/files/<fileid>")
+def download(fileid):
     """Download video file."""
 
-    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    video_to_download = Video.get_video_by_fileid(fileid)
+
+    #check if video exists in database
+    if not video_to_download:
+        return "File not found", 404
+
+    #add path to file name
+    file_path = app.config['UPLOAD_FOLDER'] + video_to_download.fileid
     
-    return send_from_directory(directory=uploads, filename=filename)
+    return send_file(file_path, as_attachment=True), 200
+
 
 
 if __name__ == "__main__":
