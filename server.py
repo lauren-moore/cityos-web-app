@@ -24,10 +24,8 @@ def homepage():
     return render_template('homepage.html')
 
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 @app.route('/upload', methods=["POST"])
@@ -60,7 +58,6 @@ def upload_video():
         new_video = Video.create_video(fileid=filename, name=name, mimetype=mimetype, created_at=date.today())
         db.session.add(new_video)
         db.session.commit()
-
 
     #if video has unsupported media type
     else:

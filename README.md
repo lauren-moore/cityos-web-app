@@ -61,7 +61,7 @@ Install the dependencies:
 Seed the database:
 
 ```
-(env) python3 seed.py
+(env) python3 seed_database.py
 ```
 
 
